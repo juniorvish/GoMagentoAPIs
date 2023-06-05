@@ -1,19 +1,18 @@
 the app is: GoMagentoAPIs
 
-the files we have decided to generate are: main.go, api.go, models.go, README.md
+the files we have decided to generate are: 
+1. go_magento_apis.go
+2. go_magento_apis_test.go
+3. java_deskera_sync.java
+4. java_deskera_sync_test.java
+5. README.md
 
 Shared dependencies:
-1. AuthToken (header)
-2. Filter (data schema)
-3. Pagination (data schema)
-4. Product (data schema)
-5. Customer (data schema)
-6. Order (data schema)
-7. Payment (data schema)
-8. GetAllProducts (function name)
-9. GetAllCustomers (function name)
-10. GetAllOrders (function name)
-11. GetAllPayments (function name)
-12. GetProductByID (function name)
-13. GetCustomerByID (function name)
-14. GetOrderByID (function name)
+1. Auth token variable: authToken
+2. API base URLs: magentoBaseURL, deskeraBaseURL
+3. Data schemas: Product, Customer, Order, Payment, DeskeraProduct, DeskeraContact, DeskeraSalesInvoice
+4. Filter variables: createdDate, updatedDate, productName, productCode, customerName, customerCode, orderId
+5. Function names: getAllProducts, getAllCustomers, getAllOrders, getAllPayments, getProductById, getCustomerById, getOrderById, syncProducts, syncCustomers, syncOrders
+6. Message names: productsResponse, customersResponse, ordersResponse, paymentsResponse, productDetailsResponse, customerDetailsResponse, orderDetailsResponse
+7. Cron job names: syncProductsJob, syncCustomersJob, syncOrdersJob
+8. ID names for DOM elements (if applicable): N/A
