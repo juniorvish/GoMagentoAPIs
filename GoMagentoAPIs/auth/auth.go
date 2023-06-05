@@ -1,21 +1,59 @@
 package auth
 
 import (
+	"encoding/json"
+	"errors"
+	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
-const AuthTokenHeader = "X-Auth-Token"
+const (
+	magentoBaseURL = "https://your-magento-instance.com"
+)
 
-func CheckAuthToken(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authToken := r.Header.Get(AuthTokenHeader)
-		if authToken == "" {
-			http.Error(w, "Unauthorized: Missing auth token", http.StatusUnauthorized)
-			return
-		}
+type AuthResponse struct {
+	AccessToken string `json:"access_token"`
+}
 
-		// Add your logic here to validate the authToken with Magento API
+func GetAuthToken(clientID, clientSecret, username, password string) (string, error) {
+	url := magentoBaseURL + "/rest/V1/integration/admin/token"
 
-		next.ServeHTTP(w, r)
-	})
+	data := map[string]string{
+		"username": username,
+		"password": password,
+	}
+	jsonData, _ := json.Marshal(data)
+
+	req, err := http.NewRequest("POST", url, strings.NewReader(string(jsonData)))
+	if err != nil {
+		return "", err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.SetBasicAuth(clientID, clientSecret)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", errors.New("failed to get auth token")
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var authResponse AuthResponse
+	err = json.Unmarshal(body, &authResponse)
+	if err != nil {
+		return "", err
+	}
+
+	return authResponse.AccessToken, nil
 }
